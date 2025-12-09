@@ -211,6 +211,57 @@ window.addEventListener('resize', () => {
 });
 
 // ============================================
+// MOBILE MENU TOGGLE
+// ============================================
+
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileMenuBtn && navLinks) {
+    // Create mobile menu overlay
+    const mobileMenuOverlay = document.createElement('div');
+    mobileMenuOverlay.className = 'mobile-menu-overlay';
+    mobileMenuOverlay.innerHTML = `
+        <div class="mobile-menu-content">
+            <button class="mobile-menu-close">✕</button>
+            ${navLinks.outerHTML}
+        </div>
+    `;
+    document.body.appendChild(mobileMenuOverlay);
+    
+    const closeBtn = mobileMenuOverlay.querySelector('.mobile-menu-close');
+    const mobileNavLinks = mobileMenuOverlay.querySelector('.nav-links');
+    
+    // Show menu
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    // Close menu
+    closeBtn.addEventListener('click', () => {
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+    
+    // Close on link click
+    mobileNavLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    });
+    
+    // Close on overlay click
+    mobileMenuOverlay.addEventListener('click', (e) => {
+        if (e.target === mobileMenuOverlay) {
+            mobileMenuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+// ============================================
 // SCROLL ANIMATIONS
 // ============================================
 
@@ -302,9 +353,3 @@ if (form) {
         });
     });
 }
-
-// ============================================
-// MUSIC PLAYER - REMOVED (Handled in HTML)
-// ============================================
-// Music control is now handled directly in index.html
-// to avoid conflicts between scripts
