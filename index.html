@@ -5,8 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Younouss Mouhamed Ali - Jeune Leader</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Music Button Style */
+        #music-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF7A00, #ff9933);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 5px 20px rgba(255, 122, 0, 0.5);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(255, 122, 0, 0.7);
+        }
+        
+        #music-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bg-music" loop volume="0.3">
+        <source src="musics/alimusic.wav" type="audio/wav">
+        Votre navigateur ne supporte pas l'audio.
+    </audio>
+    
+    <!-- Music Control Button -->
+    <button id="music-btn" title="Contrôler la musique">🔇</button>
+
     <!-- 3D Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
@@ -238,5 +278,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/script.js"></script>
+    
+    <!-- Music Control Script -->
+    <script>
+        // Wait for everything to load
+        window.onload = function() {
+            const music = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-btn');
+            
+            if (!music || !musicBtn) {
+                console.error('Music elements not found');
+                return;
+            }
+            
+            // Set volume to 30%
+            music.volume = 0.3;
+            
+            let isPlaying = false;
+            
+            // Button click handler
+            musicBtn.onclick = function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                if (isPlaying) {
+                    // Pause music
+                    music.pause();
+                    musicBtn.innerHTML = '🔇';
+                    isPlaying = false;
+                    console.log('Music PAUSED');
+                } else {
+                    // Play music
+                    music.play().then(function() {
+                        musicBtn.innerHTML = '🔊';
+                        isPlaying = true;
+                        console.log('Music PLAYING');
+                    }).catch(function(error) {
+                        console.error('Cannot play music:', error);
+                        alert('Erreur: Impossible de lire la musique. Vérifiez le fichier musics/alimusic.wav');
+                    });
+                }
+            };
+            
+            // Try auto-play (will likely be blocked)
+            setTimeout(function() {
+                music.play().then(function() {
+                    musicBtn.innerHTML = '🔊';
+                    isPlaying = true;
+                    console.log('Music auto-started');
+                }).catch(function(error) {
+                    console.log('Autoplay blocked - Click the button to start');
+                    musicBtn.innerHTML = '🔇';
+                    isPlaying = false;
+                });
+            }, 500);
+        };
+    </script>
 </body>
 </html>

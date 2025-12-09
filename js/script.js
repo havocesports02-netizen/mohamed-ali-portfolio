@@ -1,74 +1,4 @@
 // ============================================
-// BACKGROUND MUSIC
-// ============================================
-
-const bgMusic = new Audio('musics/alimusic.mp3');
-bgMusic.volume = 0.3; // 30% volume
-bgMusic.loop = true; // Loop the music
-
-// Start music on first user interaction (required by browsers)
-let musicStarted = false;
-
-function startMusic() {
-    if (!musicStarted) {
-        bgMusic.play().catch(error => {
-            console.log('Autoplay prevented:', error);
-        });
-        musicStarted = true;
-    }
-}
-
-// Try to start music on page load
-window.addEventListener('load', startMusic);
-
-// Fallback: Start on first click/scroll
-document.addEventListener('click', startMusic, { once: true });
-document.addEventListener('scroll', startMusic, { once: true });
-document.addEventListener('keydown', startMusic, { once: true });
-
-// Optional: Add music control button
-const musicControl = document.createElement('button');
-musicControl.innerHTML = '🔊';
-musicControl.style.cssText = `
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF7A00, #ff9933);
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0 5px 20px rgba(255, 122, 0, 0.5);
-    transition: all 0.3s ease;
-`;
-
-musicControl.addEventListener('mouseenter', () => {
-    musicControl.style.transform = 'scale(1.1)';
-    musicControl.style.boxShadow = '0 8px 30px rgba(255, 122, 0, 0.7)';
-});
-
-musicControl.addEventListener('mouseleave', () => {
-    musicControl.style.transform = 'scale(1)';
-    musicControl.style.boxShadow = '0 5px 20px rgba(255, 122, 0, 0.5)';
-});
-
-musicControl.addEventListener('click', () => {
-    if (bgMusic.paused) {
-        bgMusic.play();
-        musicControl.innerHTML = '🔊';
-    } else {
-        bgMusic.pause();
-        musicControl.innerHTML = '🔇';
-    }
-});
-
-document.body.appendChild(musicControl);
-
-// ============================================
 // 3D ANIMATED BACKGROUND WITH THREE.JS
 // ============================================
 
@@ -372,3 +302,9 @@ if (form) {
         });
     });
 }
+
+// ============================================
+// MUSIC PLAYER - REMOVED (Handled in HTML)
+// ============================================
+// Music control is now handled directly in index.html
+// to avoid conflicts between scripts
