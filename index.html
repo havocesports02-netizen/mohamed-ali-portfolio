@@ -39,9 +39,12 @@
         /* Logo Image Styles */
         .nav-logo-img {
             height: 50px;
-            width: auto;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
             transition: all 0.3s ease;
             filter: drop-shadow(0 0 10px rgba(255, 122, 0, 0.5));
+            border: 2px solid #FF7A00;
         }
 
         .nav-logo-img:hover {
@@ -164,6 +167,7 @@
         @media (max-width: 768px) {
             .nav-logo-img {
                 height: 40px;
+                width: 40px;
             }
 
             .hero-image-logo {
@@ -185,6 +189,7 @@
         @media (max-width: 480px) {
             .nav-logo-img {
                 height: 35px;
+                width: 35px;
             }
 
             .hero-image-logo {
