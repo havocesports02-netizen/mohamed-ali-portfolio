@@ -35,6 +35,88 @@
         #music-btn:active {
             transform: scale(0.95);
         }
+
+        /* Logo Image Styles */
+        .nav-logo-img {
+            height: 50px;
+            width: auto;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 122, 0, 0.5));
+        }
+
+        .nav-logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(255, 122, 0, 0.8));
+        }
+
+        .hero-image-logo {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: 6px solid #FF7A00;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 60px rgba(255, 122, 0, 0.5), 0 0 100px rgba(255, 122, 0, 0.3);
+            animation: heroImage 4s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-image-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .hero-image-logo::before {
+            content: '';
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border: 2px solid #FF7A00;
+            border-radius: 50%;
+            opacity: 0;
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes heroImage {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes ping {
+            75%, 100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .nav-logo-img {
+                height: 40px;
+            }
+
+            .hero-image-logo {
+                width: 160px;
+                height: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo-img {
+                height: 35px;
+            }
+
+            .hero-image-logo {
+                width: 140px;
+                height: 140px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -53,7 +135,9 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo">YM</a>
+            <a href="#" class="nav-logo">
+                <img src="images/logo.png" alt="YM Logo" class="nav-logo-img">
+            </a>
             <ul class="nav-links">
                 <li><a href="#about">À Propos</a></li>
                 <li><a href="#skills">Compétences</a></li>
@@ -72,7 +156,9 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-image">YM</div>
+            <div class="hero-image-logo">
+                <img src="images/logo.png" alt="Younouss Mouhamed Ali Logo">
+            </div>
             <h1>Younouss Mouhamed Ali</h1>
             <div class="hero-subtitle">
                 <span>Jeune Leader</span>

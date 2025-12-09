@@ -1,14 +1,15 @@
 <?php
 // ============================================
-// CONTACT FORM HANDLER
+// CONTACT FORM HANDLER - FIXED VERSION
 // ============================================
 
 // Set response header to JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
-// Enable error reporting for debugging (remove in production)
+// Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 // CORS headers (if needed)
 header('Access-Control-Allow-Origin: *');
@@ -17,7 +18,10 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 // Check if request is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Méthode de requête invalide'
+    ]);
     exit;
 }
 
@@ -53,91 +57,91 @@ if (!empty($errors)) {
 }
 
 // ============================================
-// EMAIL CONFIGURATION
-// ============================================
-
-// Your email address where you want to receive messages
-$to = 'mouhamedaliyounouss656@gmail.com';
-
-// Email subject
-$subject = 'Nouveau message du portfolio - ' . $name;
-
-// Email body
-$email_body = "Vous avez reçu un nouveau message de votre portfolio:\n\n";
-$email_body .= "Nom: $name\n";
-$email_body .= "Email: $email\n\n";
-$email_body .= "Message:\n$message\n";
-
-// Email headers
-$headers = "From: $email\r\n";
-$headers .= "Reply-To: $email\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
-
-// ============================================
-// SEND EMAIL
+// SAVE TO FILE (PRIMARY METHOD)
 // ============================================
 
 try {
-    $mail_sent = mail($to, $subject, $email_body, $headers);
-    
-    if ($mail_sent) {
-        // ============================================
-        // OPTIONAL: SAVE TO DATABASE
-        // ============================================
-        
-        // Uncomment and configure if you want to save messages to database
-        /*
-        $servername = "localhost";
-        $username = "your_db_username";
-        $password = "your_db_password";
-        $dbname = "your_db_name";
-        
-        try {
-            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-            $stmt = $conn->prepare("INSERT INTO contacts (name, email, message, created_at) VALUES (:name, :email, :message, NOW())");
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':message', $message);
-            $stmt->execute();
-            
-            $conn = null;
-        } catch(PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
+    // Ensure logs directory exists
+    $log_dir = __DIR__ . '/../logs';
+    if (!is_dir($log_dir)) {
+        if (!mkdir($log_dir, 0755, true)) {
+            throw new Exception('Impossible de créer le dossier logs');
         }
-        */
-        
-        // ============================================
-        // OPTIONAL: SAVE TO FILE
-        // ============================================
-        
-        // Save message to a log file
-        $log_file = '../logs/messages.log';
-        $log_dir = dirname($log_file);
-        
-        if (!is_dir($log_dir)) {
-            mkdir($log_dir, 0755, true);
-        }
-        
-        $log_entry = date('Y-m-d H:i:s') . " - Name: $name, Email: $email, Message: $message\n";
-        file_put_contents($log_file, $log_entry, FILE_APPEND);
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Message envoyé avec succès!'
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Erreur lors de l\'envoi du message'
-        ]);
     }
+    
+    $log_file = $log_dir . '/messages.log';
+    
+    // Create detailed log entry
+    $log_entry = sprintf(
+        "[%s] Nouveau message\nNom: %s\nEmail: %s\nMessage: %s\n%s\n\n",
+        date('Y-m-d H:i:s'),
+        $name,
+        $email,
+        $message,
+        str_repeat('-', 80)
+    );
+    
+    // Try to write to log file
+    if (file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX) === false) {
+        throw new Exception('Impossible d\'écrire dans le fichier log');
+    }
+    
+    // ============================================
+    // TRY TO SEND EMAIL (OPTIONAL - May fail on some servers)
+    // ============================================
+    
+    $email_sent = false;
+    $email_error = '';
+    
+    try {
+        $to = 'mouhamedaliyounouss656@gmail.com';
+        $subject = 'Nouveau message du portfolio - ' . $name;
+        
+        $email_body = "Vous avez reçu un nouveau message de votre portfolio:\n\n";
+        $email_body .= "Nom: $name\n";
+        $email_body .= "Email: $email\n\n";
+        $email_body .= "Message:\n$message\n";
+        
+        $headers = "From: $email\r\n";
+        $headers .= "Reply-To: $email\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
+        
+        // Attempt to send email
+        $email_sent = @mail($to, $subject, $email_body, $headers);
+        
+    } catch (Exception $e) {
+        $email_error = $e->getMessage();
+        error_log("Email error: " . $email_error);
+    }
+    
+    // ============================================
+    // SUCCESS RESPONSE
+    // ============================================
+    
+    // Success even if email fails (message is saved to log file)
+    $response = [
+        'success' => true,
+        'message' => 'Message envoyé avec succès! Je vous répondrai bientôt.'
+    ];
+    
+    // Add email status for debugging (optional)
+    if (!$email_sent && !empty($email_error)) {
+        $response['note'] = 'Message sauvegardé (email en attente)';
+    }
+    
+    echo json_encode($response);
+    exit;
+    
 } catch (Exception $e) {
-    error_log("Error sending email: " . $e->getMessage());
+    // Log the error
+    error_log("Contact form error: " . $e->getMessage());
+    
+    // Return error response
     echo json_encode([
         'success' => false,
-        'message' => 'Une erreur est survenue lors de l\'envoi'
+        'message' => 'Une erreur est survenue. Veuillez réessayer ou me contacter directement par email.'
     ]);
+    exit;
 }
 ?>

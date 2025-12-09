@@ -322,34 +322,156 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ============================================
-// FORM SUBMISSION
+// ENHANCED FORM SUBMISSION HANDLER
 // ============================================
 
 const form = document.querySelector('#contactForm');
 if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Get the submit button
+        const submitBtn = form.querySelector('.btn-submit');
+        const originalBtnText = submitBtn.textContent;
+        
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi en cours...';
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
         
         // Get form data
         const formData = new FormData(form);
         
-        // Send AJAX request to PHP
-        fetch('php/contact.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            // Send AJAX request to PHP
+            const response = await fetch('php/contact.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Check if response is ok
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            // Parse JSON response
+            const data = await response.json();
+            
+            // Handle response
             if (data.success) {
-                alert('Message envoyé avec succès! Je vous répondrai bientôt.');
+                // Success alert with custom styling
+                showCustomAlert('✅ Succès!', data.message, 'success');
                 form.reset();
             } else {
-                alert('Erreur: ' + data.message);
+                // Error alert
+                showCustomAlert('❌ Erreur', data.message || 'Une erreur est survenue', 'error');
             }
-        })
-        .catch(error => {
+            
+        } catch (error) {
             console.error('Error:', error);
-            alert('Une erreur est survenue. Veuillez réessayer.');
-        });
+            
+            // Network or parsing error
+            showCustomAlert(
+                '❌ Erreur de connexion', 
+                'Impossible de contacter le serveur. Veuillez vérifier votre connexion ou me contacter directement par email: mouhamedaliyounouss656@gmail.com',
+                'error'
+            );
+        } finally {
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
     });
+}
+
+// ============================================
+// CUSTOM ALERT FUNCTION
+// ============================================
+
+function showCustomAlert(title, message, type) {
+    // Remove existing alerts
+    const existingAlert = document.querySelector('.custom-alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+    
+    // Create alert element
+    const alert = document.createElement('div');
+    alert.className = 'custom-alert';
+    alert.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: ${type === 'success' ? 'rgba(0, 200, 100, 0.95)' : 'rgba(255, 50, 50, 0.95)'};
+        color: white;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        z-index: 10001;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        animation: slideIn 0.3s ease;
+        backdrop-filter: blur(10px);
+    `;
+    
+    alert.innerHTML = `
+        <h3 style="margin: 0 0 15px 0; font-size: 1.5em;">${title}</h3>
+        <p style="margin: 0 0 20px 0; line-height: 1.6;">${message}</p>
+        <button onclick="this.parentElement.remove()" style="
+            background: white;
+            color: ${type === 'success' ? '#00c864' : '#ff3232'};
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            OK
+        </button>
+    `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Add to page
+    document.body.appendChild(alert);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alert.parentElement) {
+            alert.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 5000);
+    
+    // Close on click outside
+    setTimeout(() => {
+        const closeOnClickOutside = (e) => {
+            if (!alert.contains(e.target)) {
+                alert.remove();
+                document.removeEventListener('click', closeOnClickOutside);
+            }
+        };
+        document.addEventListener('click', closeOnClickOutside);
+    }, 100);
 }
