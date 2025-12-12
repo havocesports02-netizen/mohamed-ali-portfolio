@@ -1,5 +1,5 @@
 /* ============================================
-   GLOBAL STYLES
+   GLOBAL STYLES & ANTI-COPY PROTECTION
    ============================================ */
 
 * {
@@ -14,6 +14,35 @@ body {
     color: #1E1E1E;
     overflow-x: hidden;
     background: #000000;
+    /* Anti-Copy: Disable text selection globally */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection for inputs and interactive elements */
+input, textarea, a, button {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+/* Watermark protection */
+body::before {
+    content: '© 2026 Younouss Mouhamed Ali - Contenu Protégé';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 80px;
+    opacity: 0.03;
+    color: #FF7A00;
+    pointer-events: none;
+    z-index: -1;
+    white-space: nowrap;
+    font-weight: bold;
 }
 
 .container {
@@ -982,7 +1011,7 @@ body {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
 }
 
- {
+.contact-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;
@@ -1122,11 +1151,26 @@ body {
     justify-content: center;
 }
 
+.footer a {
+    color: #FF7A00;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
+}
+
+.footer p {
+    opacity: 0.9;
+    margin-top: 20px;
+}
+
 /* ============================================
    RESPONSIVE STYLES
    ============================================ */
 
-/* Tablets and Small Desktops */
 @media (max-width: 1024px) {
     .container {
         padding: 0 30px;
@@ -1143,9 +1187,7 @@ body {
     }
 }
 
-/* Mobile Devices */
 @media (max-width: 768px) {
-    /* Navigation */
     .nav-links {
         display: none;
     }
@@ -1171,7 +1213,6 @@ body {
         font-size: 0.9em;
     }
 
-    /* Hero Section */
     .hero {
         padding: 100px 15px 40px;
         min-height: 90vh;
@@ -1229,7 +1270,6 @@ body {
         font-size: 1.1em;
     }
 
-    /* Sections */
     .about,
     .skills,
     .projects,
@@ -1249,7 +1289,6 @@ body {
         transform: translateX(-50%);
     }
 
-    /* About Section */
     .about-content {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -1276,7 +1315,6 @@ body {
         line-height: 1.7;
     }
 
-    /* Skills Section */
     .skills-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1306,7 +1344,6 @@ body {
         font-size: 1em;
     }
 
-    /* Projects Section */
     .projects-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1326,7 +1363,6 @@ body {
         padding: 8px 0;
     }
 
-    /* Motivation Section */
     .motivation-content {
         padding: 25px;
         margin-top: 30px;
@@ -1344,7 +1380,6 @@ body {
         margin-bottom: 15px;
     }
 
-    /* Contact Section */
     .contact-content {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -1383,7 +1418,6 @@ body {
         font-size: 1em;
     }
 
-    /* Footer */
     .footer {
         padding: 30px 15px;
     }
@@ -1397,7 +1431,6 @@ body {
         margin: 20px 0;
     }
     
-    /* Music Button */
     #music-btn {
         width: 50px;
         height: 50px;
@@ -1407,7 +1440,6 @@ body {
     }
 }
 
-/* Small Mobile Devices */
 @media (max-width: 480px) {
     .hero h1 {
         font-size: 1.6em;
@@ -1450,7 +1482,6 @@ body {
     }
 }
 
-/* Landscape Mobile */
 @media (max-width: 768px) and (orientation: landscape) {
     .hero {
         min-height: auto;

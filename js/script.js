@@ -322,6 +322,95 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ============================================
+// ANTI-COPY PROTECTION SYSTEM
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. DISABLE RIGHT-CLICK CONTEXT MENU
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        console.warn('🛡️ Contenu protégé - Le clic droit est désactivé');
+        return false;
+    });
+    
+    // 2. DISABLE DANGEROUS KEYBOARD SHORTCUTS
+    document.addEventListener('keydown', (e) => {
+        // Block Ctrl+C, Ctrl+X, Ctrl+A
+        if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+            console.warn('🛡️ Raccourci clavier bloqué: ' + e.key);
+            return false;
+        }
+        
+        // Block F12 (Developer Tools)
+        if (e.key === 'F12') {
+            e.preventDefault();
+            console.warn('🛡️ DevTools bloqué');
+            return false;
+        }
+        
+        // Block Ctrl+Shift+I (Inspect Element)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+            console.warn('🛡️ Inspect Element bloqué');
+            return false;
+        }
+        
+        // Block Ctrl+Shift+J (Console)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'J') {
+            e.preventDefault();
+            console.warn('🛡️ Console bloquée');
+            return false;
+        }
+        
+        // Block Ctrl+Shift+C (Inspect)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+            console.warn('🛡️ Sélecteur bloqué');
+            return false;
+        }
+    });
+    
+    // 3. DISABLE TEXT SELECTION ON CERTAIN ELEMENTS (OPTIONAL)
+    // You can add data-protected attribute to elements you want to protect
+    document.querySelectorAll('[data-protected]').forEach(el => {
+        el.style.userSelect = 'none';
+        el.style.webkitUserSelect = 'none';
+        el.style.msUserSelect = 'none';
+    });
+    
+    // 4. SHOW WARNING ON TEXT SELECTION ATTEMPTS
+    document.addEventListener('mousedown', (e) => {
+        if (e.button === 0) { // Left click
+            const selectedText = window.getSelection().toString();
+            if (selectedText.length > 0) {
+                console.warn('🛡️ Contenu protégé - Copie interdite');
+            }
+        }
+    });
+    
+    // 5. PREVENT COPY EVENT
+    document.addEventListener('copy', (e) => {
+        e.preventDefault();
+        console.warn('🛡️ Copie bloquée - Contenu protégé par droit d\'auteur');
+        alert('🛡️ Contenu protégé - La copie est interdite. Veuillez respecter la propriété intellectuelle.');
+        return false;
+    });
+    
+    // 6. PREVENT CUT EVENT
+    document.addEventListener('cut', (e) => {
+        e.preventDefault();
+        console.warn('🛡️ Coupe bloquée');
+        return false;
+    });
+    
+    // 7. LOG PROTECTION ACTIVATED
+    console.log('%c🛡️ Portfolio Protection Activated', 'color: #FF7A00; font-size: 14px; font-weight: bold;');
+    console.log('%cCe contenu est protégé par droit d\'auteur © 2026 Younouss Mouhamed Ali', 'color: #FF7A00; font-weight: bold;');
+    console.log('%cCopie non autorisée', 'color: red; font-weight: bold;');
+});
+
+// ============================================
 // ENHANCED FORM SUBMISSION HANDLER
 // ============================================
 
