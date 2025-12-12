@@ -4,8 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Younouss Mouhamed Ali - Jeune Leader</title>
+    
+    <!-- ============================================
+         FAVICON / BROWSER TAB ICON
+         ============================================ -->
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="shortcut icon" href="images/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <meta name="theme-color" content="#FF7A00">
+    <meta name="msapplication-TileColor" content="#FF7A00">
+    
+    <!-- ============================================
+         PRELOAD CRITICAL RESOURCES
+         ============================================ -->
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="images/logo.png" as="image">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
+    
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- ============================================
+         LOADING SCREEN STYLES (INLINE FOR SPEED)
+         ============================================ -->
     <style>
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(255, 122, 0, 0.2);
+            border-top: 6px solid #FF7A00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #FF7A00;
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
         /* Music Button Style */
         #music-btn {
             position: fixed;
@@ -200,8 +276,17 @@
     </style>
 </head>
 <body>
+    <!-- ============================================
+         LOADING SCREEN
+         ============================================ -->
+    <div id="loading-screen">
+        <img src="images/logo.png" alt="Loading" class="loading-logo">
+        <div class="loader"></div>
+        <div class="loading-text">Chargement...</div>
+    </div>
+
     <!-- Background Music -->
-    <audio id="bg-music" loop volume="0.3">
+    <audio id="bg-music" loop preload="none">
         <source src="musics/alimusic.wav" type="audio/wav">
         Votre navigateur ne supporte pas l'audio.
     </audio>
@@ -216,7 +301,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
-                <img src="images/logo.png" alt="YM Logo" class="nav-logo-img">
+                <img src="images/logo.png" alt="YM Logo" class="nav-logo-img" loading="eager">
             </a>
             <ul class="nav-links">
                 <li><a href="#about">À Propos</a></li>
@@ -227,10 +312,10 @@
             </ul>
             <div class="social-nav">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-icon linkedin" title="LinkedIn">
-                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img">
+                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img" loading="lazy">
                 </a>
                 <a href="https://www.instagram.com/3al3ol_ys/" target="_blank" class="social-icon instagram" title="Instagram">
-                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img">
+                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img" loading="lazy">
                 </a>
             </div>
             <button class="mobile-menu-btn">☰</button>
@@ -241,7 +326,7 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-image-logo">
-                <img src="images/logo.png" alt="Younouss Mouhamed Ali Logo">
+                <img src="images/logo.png" alt="Younouss Mouhamed Ali Logo" loading="eager">
             </div>
             <h1>Younouss Mouhamed Ali</h1>
             <div class="hero-subtitle">
@@ -257,10 +342,10 @@
             </div>
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-link linkedin" title="LinkedIn">
-                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img">
+                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img" loading="lazy">
                 </a>
                 <a href="https://www.instagram.com/3al3ol_ys/" target="_blank" class="social-link instagram" title="Instagram">
-                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img">
+                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img" loading="lazy">
                 </a>
             </div>
         </div>
@@ -442,25 +527,43 @@
             <div class="footer-slogan">Vision. Discipline. Innovation Civique.</div>
             <div class="footer-social">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-link linkedin" title="LinkedIn">
-                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img">
+                    <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img" loading="lazy">
                 </a>
                 <a href="https://www.instagram.com/3al3ol_ys/" target="_blank" class="social-link instagram" title="Instagram">
-                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img">
+                    <img src="images/instagram.png" alt="Instagram" class="social-logo-img" loading="lazy">
                 </a>
             </div>
             <p>&copy; 2026 Younouss Mouhamed Ali. Tous droits réservés. | <a href="#terms" style="color: #FF7A00; text-decoration: none;">Conditions d'utilisation</a></p>
         </div>
     </footer>
 
-    <!-- Three.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="js/script.js"></script>
+    <!-- Three.js Library - Deferred Loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
     
-    <!-- Music Control Script -->
+    <!-- Custom JavaScript - Deferred Loading -->
+    <script src="js/script.js" defer></script>
+    
+    <!-- ============================================
+         LOADING SCREEN & INITIALIZATION
+         ============================================ -->
     <script>
-        // Wait for everything to load
-        window.onload = function() {
+        // Loading Screen Management
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            // Minimum display time for loading screen
+            setTimeout(function() {
+                loadingScreen.classList.add('hidden');
+                
+                // Remove from DOM after transition
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 800);
+        });
+        
+        // Music Control Script
+        window.addEventListener('DOMContentLoaded', function() {
             const music = document.getElementById('bg-music');
             const musicBtn = document.getElementById('music-btn');
             
@@ -480,37 +583,19 @@
                 event.stopPropagation();
                 
                 if (isPlaying) {
-                    // Pause music
                     music.pause();
                     musicBtn.innerHTML = '🔇';
                     isPlaying = false;
-                    console.log('Music PAUSED');
                 } else {
-                    // Play music
                     music.play().then(function() {
                         musicBtn.innerHTML = '🔊';
                         isPlaying = true;
-                        console.log('Music PLAYING');
                     }).catch(function(error) {
                         console.error('Cannot play music:', error);
-                        alert('Erreur: Impossible de lire la musique. Vérifiez le fichier musics/alimusic.wav');
                     });
                 }
             };
-            
-            // Try auto-play (will likely be blocked)
-            setTimeout(function() {
-                music.play().then(function() {
-                    musicBtn.innerHTML = '🔊';
-                    isPlaying = true;
-                    console.log('Music auto-started');
-                }).catch(function(error) {
-                    console.log('Autoplay blocked - Click the button to start');
-                    musicBtn.innerHTML = '🔇';
-                    isPlaying = false;
-                });
-            }, 500);
-        };
+        });
     </script>
 </body>
 </html>

@@ -1,473 +1,427 @@
 // ============================================
+// WAIT FOR DOM AND THREE.JS TO LOAD
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAll();
+});
+
+function initializeAll() {
+    // Initialize 3D background only if THREE.js is loaded
+    if (typeof THREE !== 'undefined') {
+        setTimeout(init3DBackground, 100);
+    }
+    
+    // Initialize all other features
+    initMobileMenu();
+    initScrollAnimations();
+    initNavbarHide();
+    initSmoothScroll();
+    initAntiCopyProtection();
+    initFormHandler();
+}
+
+// ============================================
 // 3D ANIMATED BACKGROUND WITH THREE.JS
 // ============================================
 
-const canvas = document.getElementById('bg-canvas');
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-camera.position.z = 30;
-
-// ============================================
-// PARTICLE SYSTEM
-// ============================================
-
-const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 1000;
-const posArray = new Float32Array(particlesCount * 3);
-const colorArray = new Float32Array(particlesCount * 3);
-
-for(let i = 0; i < particlesCount * 3; i += 3) {
-    // Position
-    posArray[i] = (Math.random() - 0.5) * 100;
-    posArray[i + 1] = (Math.random() - 0.5) * 100;
-    posArray[i + 2] = (Math.random() - 0.5) * 100;
+function init3DBackground() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas || typeof THREE === 'undefined') return;
     
-    // Color (orange gradient)
-    colorArray[i] = 1.0; // R
-    colorArray[i + 1] = 0.48 + Math.random() * 0.2; // G
-    colorArray[i + 2] = 0; // B
-}
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-
-const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.2,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending,
-    sizeAttenuation: true
-});
-
-const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-scene.add(particlesMesh);
-
-// ============================================
-// GEOMETRIC SHAPES
-// ============================================
-
-const shapes = [];
-const geometries = [
-    new THREE.IcosahedronGeometry(1.5, 0),
-    new THREE.OctahedronGeometry(1.5, 0),
-    new THREE.TetrahedronGeometry(1.5, 0),
-    new THREE.TorusGeometry(1, 0.4, 16, 100)
-];
-
-for(let i = 0; i < 20; i++) {
-    const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-    const material = new THREE.MeshBasicMaterial({
-        color: 0xFF7A00,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.2
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    
-    mesh.position.x = (Math.random() - 0.5) * 80;
-    mesh.position.y = (Math.random() - 0.5) * 80;
-    mesh.position.z = (Math.random() - 0.5) * 80;
-    
-    mesh.rotation.x = Math.random() * Math.PI;
-    mesh.rotation.y = Math.random() * Math.PI;
-    mesh.rotation.z = Math.random() * Math.PI;
-    
-    const scale = 0.5 + Math.random() * 1.5;
-    mesh.scale.set(scale, scale, scale);
-    
-    mesh.userData = {
-        rotationSpeed: {
-            x: (Math.random() - 0.5) * 0.02,
-            y: (Math.random() - 0.5) * 0.02,
-            z: (Math.random() - 0.5) * 0.01
-        },
-        floatSpeed: 0.0005 + Math.random() * 0.001,
-        floatRange: 2 + Math.random() * 3
-    };
-    
-    scene.add(mesh);
-    shapes.push(mesh);
-}
-
-// ============================================
-// CONNECTING LINES
-// ============================================
-
-const linesMaterial = new THREE.LineBasicMaterial({
-    color: 0xFF7A00,
-    transparent: true,
-    opacity: 0.1
-});
-
-function createConnectingLines() {
-    const positions = particlesGeometry.attributes.position.array;
-    const maxDistance = 15;
-    
-    for(let i = 0; i < particlesCount; i++) {
-        for(let j = i + 1; j < particlesCount; j++) {
-            const dx = positions[i * 3] - positions[j * 3];
-            const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
-            const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
-            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            
-            if(distance < maxDistance && Math.random() > 0.98) {
-                const lineGeometry = new THREE.BufferGeometry();
-                const linePositions = new Float32Array([
-                    positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
-                    positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
-                ]);
-                lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
-                const line = new THREE.Line(lineGeometry, linesMaterial);
-                scene.add(line);
-            }
-        }
-    }
-}
-
-createConnectingLines();
-
-// ============================================
-// MOUSE INTERACTION
-// ============================================
-
-let mouseX = 0;
-let mouseY = 0;
-let targetX = 0;
-let targetY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-});
-
-// ============================================
-// ANIMATION LOOP
-// ============================================
-
-let scrollY = window.scrollY;
-window.addEventListener('scroll', () => {
-    scrollY = window.scrollY;
-});
-
-const clock = new THREE.Clock();
-
-function animate() {
-    requestAnimationFrame(animate);
-    
-    const elapsedTime = clock.getElapsedTime();
-
-    // Smooth camera movement
-    targetX = mouseX * 5;
-    targetY = mouseY * 5;
-    camera.position.x += (targetX - camera.position.x) * 0.05;
-    camera.position.y += (targetY - camera.position.y) * 0.05;
-    camera.lookAt(scene.position);
-
-    // Rotate particles
-    particlesMesh.rotation.y = elapsedTime * 0.05;
-    particlesMesh.rotation.x = scrollY * 0.0002;
-
-    // Animate particles
-    const positions = particlesGeometry.attributes.position.array;
-    for(let i = 0; i < particlesCount * 3; i += 3) {
-        positions[i + 1] += Math.sin(elapsedTime + positions[i]) * 0.01;
-    }
-    particlesGeometry.attributes.position.needsUpdate = true;
-
-    // Animate shapes
-    shapes.forEach((shape, index) => {
-        shape.rotation.x += shape.userData.rotationSpeed.x;
-        shape.rotation.y += shape.userData.rotationSpeed.y;
-        shape.rotation.z += shape.userData.rotationSpeed.z;
-        
-        // Floating effect
-        shape.position.y += Math.sin(elapsedTime * shape.userData.floatSpeed + index) * 0.03;
-        shape.position.x += Math.cos(elapsedTime * shape.userData.floatSpeed + index) * 0.02;
-        
-        // Pulse effect
-        const pulse = 1 + Math.sin(elapsedTime * 2 + index) * 0.05;
-        shape.material.opacity = 0.15 + Math.sin(elapsedTime + index) * 0.05;
-    });
-
-    renderer.render(scene, camera);
-}
-
-animate();
-
-// ============================================
-// WINDOW RESIZE
-// ============================================
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
+    camera.position.z = 30;
+
+    // ============================================
+    // PARTICLE SYSTEM (REDUCED FOR PERFORMANCE)
+    // ============================================
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 500; // Reduced from 1000
+    const posArray = new Float32Array(particlesCount * 3);
+    const colorArray = new Float32Array(particlesCount * 3);
+
+    for(let i = 0; i < particlesCount * 3; i += 3) {
+        posArray[i] = (Math.random() - 0.5) * 100;
+        posArray[i + 1] = (Math.random() - 0.5) * 100;
+        posArray[i + 2] = (Math.random() - 0.5) * 100;
+        
+        colorArray[i] = 1.0;
+        colorArray[i + 1] = 0.48 + Math.random() * 0.2;
+        colorArray[i + 2] = 0;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.2,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true
+    });
+
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    // ============================================
+    // GEOMETRIC SHAPES (REDUCED FOR PERFORMANCE)
+    // ============================================
+
+    const shapes = [];
+    const geometries = [
+        new THREE.IcosahedronGeometry(1.5, 0),
+        new THREE.OctahedronGeometry(1.5, 0),
+        new THREE.TetrahedronGeometry(1.5, 0),
+        new THREE.TorusGeometry(1, 0.4, 16, 100)
+    ];
+
+    for(let i = 0; i < 10; i++) { // Reduced from 20
+        const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+        const material = new THREE.MeshBasicMaterial({
+            color: 0xFF7A00,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.2
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        
+        mesh.position.x = (Math.random() - 0.5) * 80;
+        mesh.position.y = (Math.random() - 0.5) * 80;
+        mesh.position.z = (Math.random() - 0.5) * 80;
+        
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        mesh.rotation.z = Math.random() * Math.PI;
+        
+        const scale = 0.5 + Math.random() * 1.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        mesh.userData = {
+            rotationSpeed: {
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.01
+            },
+            floatSpeed: 0.0005 + Math.random() * 0.001,
+            floatRange: 2 + Math.random() * 3
+        };
+        
+        scene.add(mesh);
+        shapes.push(mesh);
+    }
+
+    // ============================================
+    // MOUSE INTERACTION (THROTTLED)
+    // ============================================
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    let lastMouseMove = 0;
+    document.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastMouseMove > 50) { // Throttle to every 50ms
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            lastMouseMove = now;
+        }
+    });
+
+    // ============================================
+    // ANIMATION LOOP (OPTIMIZED)
+    // ============================================
+
+    let scrollY = window.scrollY;
+    let lastScrollTime = 0;
+    
+    window.addEventListener('scroll', () => {
+        const now = Date.now();
+        if (now - lastScrollTime > 50) { // Throttle scroll updates
+            scrollY = window.scrollY;
+            lastScrollTime = now;
+        }
+    }, { passive: true });
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const elapsedTime = clock.getElapsedTime();
+
+        // Smooth camera movement
+        targetX = mouseX * 5;
+        targetY = mouseY * 5;
+        camera.position.x += (targetX - camera.position.x) * 0.05;
+        camera.position.y += (targetY - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+
+        // Rotate particles
+        particlesMesh.rotation.y = elapsedTime * 0.05;
+        particlesMesh.rotation.x = scrollY * 0.0002;
+
+        // Animate particles (every other frame for performance)
+        if (Math.floor(elapsedTime * 60) % 2 === 0) {
+            const positions = particlesGeometry.attributes.position.array;
+            for(let i = 0; i < particlesCount * 3; i += 3) {
+                positions[i + 1] += Math.sin(elapsedTime + positions[i]) * 0.01;
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+        }
+
+        // Animate shapes
+        shapes.forEach((shape, index) => {
+            shape.rotation.x += shape.userData.rotationSpeed.x;
+            shape.rotation.y += shape.userData.rotationSpeed.y;
+            shape.rotation.z += shape.userData.rotationSpeed.z;
+            
+            shape.position.y += Math.sin(elapsedTime * shape.userData.floatSpeed + index) * 0.03;
+            shape.position.x += Math.cos(elapsedTime * shape.userData.floatSpeed + index) * 0.02;
+            
+            const pulse = 1 + Math.sin(elapsedTime * 2 + index) * 0.05;
+            shape.material.opacity = 0.15 + Math.sin(elapsedTime + index) * 0.05;
+        });
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // ============================================
+    // WINDOW RESIZE (DEBOUNCED)
+    // ============================================
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }, 250);
+    });
+}
 
 // ============================================
 // MOBILE MENU TOGGLE
 // ============================================
 
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
+function initMobileMenu() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
 
-if (mobileMenuBtn && navLinks) {
-    // Create mobile menu overlay
-    const mobileMenuOverlay = document.createElement('div');
-    mobileMenuOverlay.className = 'mobile-menu-overlay';
-    mobileMenuOverlay.innerHTML = `
-        <div class="mobile-menu-content">
-            <button class="mobile-menu-close">✕</button>
-            ${navLinks.outerHTML}
-        </div>
-    `;
-    document.body.appendChild(mobileMenuOverlay);
-    
-    const closeBtn = mobileMenuOverlay.querySelector('.mobile-menu-close');
-    const mobileNavLinks = mobileMenuOverlay.querySelector('.nav-links');
-    
-    // Show menu
-    mobileMenuBtn.addEventListener('click', () => {
-        mobileMenuOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-    
-    // Close menu
-    closeBtn.addEventListener('click', () => {
-        mobileMenuOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-    
-    // Close on link click
-    mobileNavLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
+    if (mobileMenuBtn && navLinks) {
+        const mobileMenuOverlay = document.createElement('div');
+        mobileMenuOverlay.className = 'mobile-menu-overlay';
+        mobileMenuOverlay.innerHTML = `
+            <div class="mobile-menu-content">
+                <button class="mobile-menu-close">✕</button>
+                ${navLinks.outerHTML}
+            </div>
+        `;
+        document.body.appendChild(mobileMenuOverlay);
+        
+        const closeBtn = mobileMenuOverlay.querySelector('.mobile-menu-close');
+        const mobileNavLinks = mobileMenuOverlay.querySelector('.nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeBtn.addEventListener('click', () => {
             mobileMenuOverlay.classList.remove('active');
             document.body.style.overflow = '';
         });
-    });
-    
-    // Close on overlay click
-    mobileMenuOverlay.addEventListener('click', (e) => {
-        if (e.target === mobileMenuOverlay) {
-            mobileMenuOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
+        
+        mobileNavLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        mobileMenuOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileMenuOverlay) {
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
 }
 
 // ============================================
 // SCROLL ANIMATIONS
 // ============================================
 
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target); // Stop observing once visible
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+}
+
+// ============================================
+// NAVBAR HIDE ON SCROLL (THROTTLED)
+// ============================================
+
+function initNavbarHide() {
+    let lastScroll = 0;
+    const navbar = document.querySelector('.navbar');
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll <= 0) {
+                    navbar.classList.remove('hidden');
+                } else if (currentScroll > lastScroll && currentScroll > 80) {
+                    navbar.classList.add('hidden');
+                } else {
+                    navbar.classList.remove('hidden');
+                }
+                
+                lastScroll = currentScroll;
+                ticking = false;
+            });
+            ticking = true;
         }
-    });
-}, observerOptions);
-
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-// ============================================
-// NAVBAR HIDE ON SCROLL
-// ============================================
-
-let lastScroll = 0;
-const navbar = document.querySelector('.navbar');
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll <= 0) {
-        navbar.classList.remove('hidden');
-        return;
-    }
-    
-    if (currentScroll > lastScroll && currentScroll > 80) {
-        navbar.classList.add('hidden');
-    } else {
-        navbar.classList.remove('hidden');
-    }
-    
-    lastScroll = currentScroll;
-});
+    }, { passive: true });
+}
 
 // ============================================
 // SMOOTH SCROLL
 // ============================================
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-});
+}
 
 // ============================================
 // ANTI-COPY PROTECTION SYSTEM
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. DISABLE RIGHT-CLICK CONTEXT MENU
+function initAntiCopyProtection() {
+    // Disable right-click
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        console.warn('🛡️ Contenu protégé - Le clic droit est désactivé');
         return false;
     });
     
-    // 2. DISABLE DANGEROUS KEYBOARD SHORTCUTS
+    // Disable dangerous keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-        // Block Ctrl+C, Ctrl+X, Ctrl+A
         if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a'].includes(e.key.toLowerCase())) {
             e.preventDefault();
-            console.warn('🛡️ Raccourci clavier bloqué: ' + e.key);
             return false;
         }
         
-        // Block F12 (Developer Tools)
         if (e.key === 'F12') {
             e.preventDefault();
-            console.warn('🛡️ DevTools bloqué');
             return false;
         }
         
-        // Block Ctrl+Shift+I (Inspect Element)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) {
             e.preventDefault();
-            console.warn('🛡️ Inspect Element bloqué');
-            return false;
-        }
-        
-        // Block Ctrl+Shift+J (Console)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'J') {
-            e.preventDefault();
-            console.warn('🛡️ Console bloquée');
-            return false;
-        }
-        
-        // Block Ctrl+Shift+C (Inspect)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
-            e.preventDefault();
-            console.warn('🛡️ Sélecteur bloqué');
             return false;
         }
     });
     
-    // 3. DISABLE TEXT SELECTION ON CERTAIN ELEMENTS (OPTIONAL)
-    // You can add data-protected attribute to elements you want to protect
-    document.querySelectorAll('[data-protected]').forEach(el => {
-        el.style.userSelect = 'none';
-        el.style.webkitUserSelect = 'none';
-        el.style.msUserSelect = 'none';
-    });
-    
-    // 4. SHOW WARNING ON TEXT SELECTION ATTEMPTS
-    document.addEventListener('mousedown', (e) => {
-        if (e.button === 0) { // Left click
-            const selectedText = window.getSelection().toString();
-            if (selectedText.length > 0) {
-                console.warn('🛡️ Contenu protégé - Copie interdite');
-            }
-        }
-    });
-    
-    // 5. PREVENT COPY EVENT
+    // Prevent copy event
     document.addEventListener('copy', (e) => {
         e.preventDefault();
-        console.warn('🛡️ Copie bloquée - Contenu protégé par droit d\'auteur');
-        alert('🛡️ Contenu protégé - La copie est interdite. Veuillez respecter la propriété intellectuelle.');
         return false;
     });
     
-    // 6. PREVENT CUT EVENT
+    // Prevent cut event
     document.addEventListener('cut', (e) => {
         e.preventDefault();
-        console.warn('🛡️ Coupe bloquée');
         return false;
     });
-    
-    // 7. LOG PROTECTION ACTIVATED
-    console.log('%c🛡️ Portfolio Protection Activated', 'color: #FF7A00; font-size: 14px; font-weight: bold;');
-    console.log('%cCe contenu est protégé par droit d\'auteur © 2026 Younouss Mouhamed Ali', 'color: #FF7A00; font-weight: bold;');
-    console.log('%cCopie non autorisée', 'color: red; font-weight: bold;');
-});
+}
 
 // ============================================
-// ENHANCED FORM SUBMISSION HANDLER
+// FORM SUBMISSION HANDLER
 // ============================================
 
-const form = document.querySelector('#contactForm');
-if (form) {
+function initFormHandler() {
+    const form = document.querySelector('#contactForm');
+    if (!form) return;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Get the submit button
         const submitBtn = form.querySelector('.btn-submit');
         const originalBtnText = submitBtn.textContent;
         
-        // Disable button and show loading state
         submitBtn.disabled = true;
         submitBtn.textContent = 'Envoi en cours...';
         submitBtn.style.opacity = '0.6';
         submitBtn.style.cursor = 'not-allowed';
         
-        // Get form data
         const formData = new FormData(form);
         
         try {
-            // Send AJAX request to PHP
             const response = await fetch('php/contact.php', {
                 method: 'POST',
                 body: formData
             });
             
-            // Check if response is ok
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            // Parse JSON response
             const data = await response.json();
             
-            // Handle response
             if (data.success) {
-                // Success alert with custom styling
                 showCustomAlert('✅ Succès!', data.message, 'success');
                 form.reset();
             } else {
-                // Error alert
                 showCustomAlert('❌ Erreur', data.message || 'Une erreur est survenue', 'error');
             }
             
         } catch (error) {
             console.error('Error:', error);
-            
-            // Network or parsing error
             showCustomAlert(
                 '❌ Erreur de connexion', 
-                'Impossible de contacter le serveur. Veuillez vérifier votre connexion ou me contacter directement par email: mouhamedaliyounouss656@gmail.com',
+                'Impossible de contacter le serveur. Veuillez me contacter directement par email: mouhamedaliyounouss656@gmail.com',
                 'error'
             );
         } finally {
-            // Re-enable button
             submitBtn.disabled = false;
             submitBtn.textContent = originalBtnText;
             submitBtn.style.opacity = '1';
@@ -481,13 +435,11 @@ if (form) {
 // ============================================
 
 function showCustomAlert(title, message, type) {
-    // Remove existing alerts
     const existingAlert = document.querySelector('.custom-alert');
     if (existingAlert) {
         existingAlert.remove();
     }
     
-    // Create alert element
     const alert = document.createElement('div');
     alert.className = 'custom-alert';
     alert.style.cssText = `
@@ -526,7 +478,6 @@ function showCustomAlert(title, message, type) {
         </button>
     `;
     
-    // Add animation
     const style = document.createElement('style');
     style.textContent = `
         @keyframes slideIn {
@@ -542,10 +493,8 @@ function showCustomAlert(title, message, type) {
     `;
     document.head.appendChild(style);
     
-    // Add to page
     document.body.appendChild(alert);
     
-    // Auto-remove after 5 seconds
     setTimeout(() => {
         if (alert.parentElement) {
             alert.style.animation = 'slideIn 0.3s ease reverse';
@@ -553,7 +502,6 @@ function showCustomAlert(title, message, type) {
         }
     }, 5000);
     
-    // Close on click outside
     setTimeout(() => {
         const closeOnClickOutside = (e) => {
             if (!alert.contains(e.target)) {
