@@ -8,7 +8,7 @@ Portfolio personnel moderne avec animations 3D interactives utilisant Three.js
 portfolio/
 ├── index.html              # Page principale
 ├── css/
-│   └── styles.css         # Feuilles de style
+│   └── styless.css         # Feuilles de style
 ├── js/
 │   └── script.js          # Scripts JavaScript et animations 3D
 ├── php/
@@ -65,7 +65,7 @@ mkdir css js php images logs
 
 Copiez les fichiers dans les dossiers appropriés:
 - `index.html` → racine
-- `styles.css` → dossier `css/`
+- `styless.css` → dossier `css/`
 - `script.js` → dossier `js/`
 - `contact.php` → dossier `php/`
 
@@ -123,7 +123,7 @@ $dbname = "votre_base_de_donnees";
 
 ### Couleurs
 
-Dans `css/styles.css`, modifiez la couleur principale:
+Dans `css/styless.css`, modifiez la couleur principale:
 ```css
 /* Remplacez #FF7A00 par votre couleur */
 --primary-color: #FF7A00;

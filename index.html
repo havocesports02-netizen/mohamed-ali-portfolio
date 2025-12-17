@@ -8,20 +8,20 @@
     <!-- ============================================
          FAVICON / BROWSER TAB ICON
          ============================================ -->
-    <link rel="icon" href="images/logo.png" type="image/png">
-    <link rel="shortcut icon" href="images/logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="images/logo.png">
+    <link rel="icon" href="images/logoali.png" type="image/png">
+    <link rel="shortcut icon" href="images/logoali.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/logoali.png">
     <meta name="theme-color" content="#FF7A00">
     <meta name="msapplication-TileColor" content="#FF7A00">
     
     <!-- ============================================
          PRELOAD CRITICAL RESOURCES
          ============================================ -->
-    <link rel="preload" href="css/styles.css" as="style">
-    <link rel="preload" href="images/logo.png" as="image">
+    <link rel="preload" href="css/styless.css" as="style">
+    <link rel="preload" href="images/logoali.png" as="image">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
     
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styless.css">
     
     <!-- ============================================
          LOADING SCREEN STYLES (INLINE FOR SPEED)
@@ -48,18 +48,29 @@
             visibility: hidden;
         }
         
-        .loader {
-            width: 80px;
-            height: 80px;
-            border: 6px solid rgba(255, 122, 0, 0.2);
-            border-top: 6px solid #FF7A00;
+        .logo-wrapper {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            z-index: 2;
+            border: 4px solid rgba(255,122,0,0.08);
+            clip-path: inset(100% 0 0 0);
+            transition: clip-path 120ms linear;
+            display: block;
         }
         
         .loading-text {
@@ -73,13 +84,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-        }
-        
-        .loading-logo {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 30px;
-            opacity: 0.9;
         }
 
         /* Music Button Style */
@@ -280,9 +284,10 @@
          LOADING SCREEN
          ============================================ -->
     <div id="loading-screen">
-        <img src="images/logo.png" alt="Loading" class="loading-logo">
-        <div class="loader"></div>
-        <div class="loading-text">Chargement...</div>
+        <div class="logo-wrapper">
+            <img id="loadingLogo" src="images/logoali.png" alt="Loading" class="loading-logo">
+        </div>
+        <div class="loading-text" data-translate="loading">Chargement...</div>
     </div>
 
     <!-- Background Music -->
@@ -301,14 +306,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
-                <img src="images/logo.png" alt="YM Logo" class="nav-logo-img" loading="eager">
+                <img src="images/logoali.png" alt="YM Logo" class="nav-logo-img" loading="eager">
             </a>
             <ul class="nav-links">
-                <li><a href="#about">À Propos</a></li>
-                <li><a href="#skills">Compétences</a></li>
-                <li><a href="#projects">Projets</a></li>
-                <li><a href="#motivation">Vision</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#about" data-translate="nav_about">À Propos</a></li>
+                <li><a href="#skills" data-translate="nav_skills">Compétences</a></li>
+                <li><a href="#projects" data-translate="nav_projects">Projets</a></li>
+                <li><a href="#motivation" data-translate="nav_vision">Vision</a></li>
+                <li><a href="#contact" data-translate="nav_contact">Contact</a></li>
             </ul>
             <div class="social-nav">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-icon linkedin" title="LinkedIn">
@@ -318,6 +323,7 @@
                     <img src="images/instagram.png" alt="Instagram" class="social-logo-img" loading="lazy">
                 </a>
             </div>
+            <!-- Language switcher will be inserted here by translations.js -->
             <button class="mobile-menu-btn">☰</button>
         </div>
     </nav>
@@ -326,19 +332,19 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-image-logo">
-                <img src="images/logo.png" alt="Younouss Mouhamed Ali Logo" loading="eager">
+                <img src="images/logoali.png" alt="Younouss Mouhamed Ali Logo" loading="eager">
             </div>
             <h1>Younouss Mouhamed Ali</h1>
             <div class="hero-subtitle">
-                <span>Jeune Leader</span>
-                <span>Stratégie</span>
-                <span>Innovation Civique</span>
-                <span>17 ans</span>
+                <span data-translate="hero_leader">Jeune Leader</span>
+                <span data-translate="hero_strategy">Stratégie</span>
+                <span data-translate="hero_innovation">Innovation Civique</span>
+                <span data-translate="hero_age">17 ans</span>
             </div>
-            <p class="hero-quote">"Construire l'avenir avec discipline, vision et innovation."</p>
+            <p class="hero-quote" data-translate="hero_quote">"Construire l'avenir avec discipline, vision et innovation."</p>
             <div class="hero-buttons">
-                <a href="#contact" class="btn btn-primary">Me Contacter</a>
-                <a href="#motivation" class="btn btn-secondary">Ma Vision</a>
+                <a href="#contact" class="btn btn-primary" data-translate="hero_btn_contact">Me Contacter</a>
+                <a href="#motivation" class="btn btn-secondary" data-translate="hero_btn_vision">Ma Vision</a>
             </div>
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-link linkedin" title="LinkedIn">
@@ -354,25 +360,25 @@
     <!-- About Section -->
     <section class="about fade-in" id="about">
         <div class="container">
-            <h2 class="section-title">À Propos</h2>
+            <h2 class="section-title" data-translate="about_title">À Propos</h2>
             <div class="about-content">
                 <div class="about-info">
                     <div class="info-item">
-                        <strong>Nom :</strong> Younouss Mouhamed Ali
+                        <strong data-translate="about_name">Nom :</strong> <span data-translate="about_name_value">Younouss Mouhamed Ali</span>
                     </div>
                     <div class="info-item">
-                        <strong>Âge :</strong> 17 ans
+                        <strong data-translate="about_age">Âge :</strong> <span data-translate="about_age_value">17 ans</span>
                     </div>
                     <div class="info-item">
-                        <strong>Téléphone :</strong> +212 665859363
+                        <strong data-translate="about_phone">Téléphone :</strong> +212 665-859363
                     </div>
                     <div class="info-item">
-                        <strong>Email :</strong> mouhamedaliyounouss656@gmail.com
+                        <strong data-translate="about_email">Email :</strong> mouhamedaliys01@gmail.com
                     </div>
                 </div>
                 <div class="about-text">
-                    <p>Je suis un jeune stratège multidisciplinaire, passionné par la gouvernance, la gestion des équipes, l'innovation digitale et la construction de politiques publiques modernes.</p>
-                    <p>Mon parcours unique combine leadership pratique, analyse stratégique et vision pour transformer des défis complexes en opportunités de croissance et d'innovation.</p>
+                    <p data-translate="about_text1">Je suis un jeune stratège multidisciplinaire, passionné par la gouvernance, la gestion des équipes, l'innovation digitale et la construction de politiques publiques modernes.</p>
+                    <p data-translate="about_text2">Mon parcours unique combine leadership pratique, analyse stratégique et vision pour transformer des défis complexes en opportunités de croissance et d'innovation.</p>
                 </div>
             </div>
         </div>
@@ -381,35 +387,35 @@
     <!-- Skills Section -->
     <section class="skills fade-in" id="skills">
         <div class="container">
-            <h2 class="section-title">Mon Parcours & Compétences</h2>
+            <h2 class="section-title" data-translate="skills_title">Mon Parcours & Compétences</h2>
             <div class="skills-grid">
                 <div class="skill-item">
                     <div class="skill-icon">🎮</div>
-                    <h3>Coaching & Gestion E-sports</h3>
-                    <p>3 ans d'expérience dans la gestion d'équipes compétitives et le développement de talents</p>
+                    <h3 data-translate="skill1_title">Coaching & Gestion E-sports</h3>
+                    <p data-translate="skill1_desc">3 ans d'expérience dans la gestion d'équipes compétitives et le développement de talents</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">🛒</div>
-                    <h3>E-commerce</h3>
-                    <p>2 ans d'expertise en stratégies commerciales digitales et logistique</p>
+                    <h3 data-translate="skill2_title">E-commerce</h3>
+                    <p data-translate="skill2_desc">2 ans d'expertise en stratégies commerciales digitales et logistique</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">📈</div>
-                    <h3>Trading & Gestion du Risque</h3>
-                    <p>1 an d'expérience dans l'analyse de marchés volatiles et la prise de décision rapide</p>
+                    <h3 data-translate="skill3_title">Trading & Gestion du Risque</h3>
+                    <p data-translate="skill3_desc">1 an d'expérience dans l'analyse de marchés volatiles et la prise de décision rapide</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">🧠</div>
-                    <h3>Leadership & Stratégie</h3>
-                    <p>Coordination d'équipes, analyse systémique et vision stratégique à long terme</p>
+                    <h3 data-translate="skill4_title">Leadership & Stratégie</h3>
+                    <p data-translate="skill4_desc">Coordination d'équipes, analyse systémique et vision stratégique à long terme</p>
                 </div>
             </div>
 
             <div class="competences-cards">
-                <div class="comp-card"><span>Micro-gouvernance</span></div>
-                <div class="comp-card"><span>Management</span></div>
-                <div class="comp-card"><span>Analyse de Risque</span></div>
-                <div class="comp-card"><span>Endurance Stratégique</span></div>
+                <div class="comp-card"><span data-translate="comp1">Micro-gouvernance</span></div>
+                <div class="comp-card"><span data-translate="comp2">Management</span></div>
+                <div class="comp-card"><span data-translate="comp3">Analyse de Risque</span></div>
+                <div class="comp-card"><span data-translate="comp4">Endurance Stratégique</span></div>
             </div>
         </div>
     </section>
@@ -417,42 +423,42 @@
     <!-- Projects Section -->
     <section class="projects fade-in" id="projects">
         <div class="container">
-            <h2 class="section-title">Réalisations & Initiatives</h2>
+            <h2 class="section-title" data-translate="projects_title">Réalisations & Initiatives</h2>
             <div class="projects-grid">
                 <div class="project-card">
-                    <h3>🏆 Académie E-sport</h3>
+                    <h3 data-translate="project1_title">🏆 Académie E-sport</h3>
                     <ul>
-                        <li>Création et gestion d'une académie de 50 joueurs</li>
-                        <li>Structuration organisationnelle complète</li>
-                        <li>Arbitrage et résolution de conflits</li>
-                        <li>Stabilité sociale et cohésion d'équipe</li>
+                        <li data-translate="project1_item1">Création et gestion d'une académie de 50 joueurs</li>
+                        <li data-translate="project1_item2">Structuration organisationnelle complète</li>
+                        <li data-translate="project1_item3">Arbitrage et résolution de conflits</li>
+                        <li data-translate="project1_item4">Stabilité sociale et cohésion d'équipe</li>
                     </ul>
                 </div>
                 <div class="project-card">
-                    <h3>📦 Logistique & COD</h3>
+                    <h3 data-translate="project2_title">📦 Logistique & COD</h3>
                     <ul>
-                        <li>Gestion des opérations commerciales</li>
-                        <li>Optimisation des flux logistiques</li>
-                        <li>Coordination multi-parties prenantes</li>
-                        <li>Excellence opérationnelle</li>
+                        <li data-translate="project2_item1">Gestion des opérations commerciales</li>
+                        <li data-translate="project2_item2">Optimisation des flux logistiques</li>
+                        <li data-translate="project2_item3">Coordination multi-parties prenantes</li>
+                        <li data-translate="project2_item4">Excellence opérationnelle</li>
                     </ul>
                 </div>
                 <div class="project-card">
-                    <h3>💹 Trading & Volatilité</h3>
+                    <h3 data-translate="project3_title">💹 Trading & Volatilité</h3>
                     <ul>
-                        <li>Analyse de marchés complexes</li>
-                        <li>Gestion du risque en temps réel</li>
-                        <li>Prise de décision sous incertitude</li>
-                        <li>Développement de stratégies adaptatives</li>
+                        <li data-translate="project3_item1">Analyse de marchés complexes</li>
+                        <li data-translate="project3_item2">Gestion du risque en temps réel</li>
+                        <li data-translate="project3_item3">Prise de décision sous incertitude</li>
+                        <li data-translate="project3_item4">Développement de stratégies adaptatives</li>
                     </ul>
                 </div>
                 <div class="project-card">
-                    <h3>🏃 Discipline Sportive</h3>
+                    <h3 data-translate="project4_title">🏃 Discipline Sportive</h3>
                     <ul>
-                        <li>Tennis de table compétitif</li>
-                        <li>Course de fond (endurance)</li>
-                        <li>Discipline mentale et physique</li>
-                        <li>Persévérance stratégique</li>
+                        <li data-translate="project4_item1">Tennis de table compétitif</li>
+                        <li data-translate="project4_item2">Course de fond (endurance)</li>
+                        <li data-translate="project4_item3">Discipline mentale et physique</li>
+                        <li data-translate="project4_item4">Persévérance stratégique</li>
                     </ul>
                 </div>
             </div>
@@ -462,24 +468,24 @@
     <!-- Motivation Letter Section -->
     <section class="motivation fade-in" id="motivation">
         <div class="container">
-            <h2 class="section-title">📜 Lettre de Motivation – Vision & Leadership</h2>
+            <h2 class="section-title" data-translate="motivation_title">📜 Lettre de Motivation – Vision & Leadership</h2>
             <div class="motivation-content">
-                <h3>I. Le Laboratoire du Leadership : Maîtrise des Systèmes Complexes</h3>
-                <p>Mon profil est une synthèse opérationnelle de l'efficacité, de la résilience et de la gestion de la complexité :</p>
+                <h3 data-translate="motivation_h3_1">I. Le Laboratoire du Leadership : Maîtrise des Systèmes Complexes</h3>
+                <p data-translate="motivation_p1">Mon profil est une synthèse opérationnelle de l'efficacité, de la résilience et de la gestion de la complexité :</p>
                 
-                <p><strong>L'Académie E-sports – La Micro-Gouvernance :</strong> En fondant et gérant une académie d'E-sports pour 50 joueurs, j'ai exercé une gouvernance appliquée. Manager, coach, responsable financier et arbitre politique interne, j'ai instauré un modèle de stabilité et de cohésion.</p>
+                <p data-translate="motivation_p2"><strong>L'Académie E-sports – La Micro-Gouvernance :</strong> En fondant et gérant une académie d'E-sports pour 50 joueurs, j'ai exercé une gouvernance appliquée. Manager, coach, responsable financier et arbitre politique interne, j'ai instauré un modèle de stabilité et de cohésion.</p>
                 
-                <p><strong>L'Efficacité dans la Volatilité :</strong> Mon expérience dans le trading et la logistique COD m'a appris à lire et gérer le risque. Décision rapide, lucidité, gestion d'incertitude : les qualités fondamentales dans les crises publiques.</p>
+                <p data-translate="motivation_p3"><strong>L'Efficacité dans la Volatilité :</strong> Mon expérience dans le trading et la logistique COD m'a appris à lire et gérer le risque. Décision rapide, lucidité, gestion d'incertitude : les qualités fondamentales dans les crises publiques.</p>
                 
-                <p><strong>L'Endurance du Stratège :</strong> Mon parcours sportif m'a donné le "Souffle Long". Discipline, persévérance, endurance : les bases pour mener des réformes exigeantes.</p>
+                <p data-translate="motivation_p4"><strong>L'Endurance du Stratège :</strong> Mon parcours sportif m'a donné le "Souffle Long". Discipline, persévérance, endurance : les bases pour mener des réformes exigeantes.</p>
 
-                <h3>II. Le Projet : Synergie entre Donnée & Humain</h3>
-                <p>Mon objectif à l'UM6P est de créer le <strong>Laboratoire de l'Innovation Civique Digitale (LICD)</strong> : un Think Tank qui utilisera la science des données pour concevoir et tester des politiques publiques pratiques, centrées sur la jeunesse et l'efficacité.</p>
+                <h3 data-translate="motivation_h3_2">II. Le Projet : Synergie entre Donnée & Humain</h3>
+                <p data-translate="motivation_p5">Mon objectif à l'UM6P est de créer le <strong>Laboratoire de l'Innovation Civique Digitale (LICD)</strong> : un Think Tank qui utilisera la science des données pour concevoir et tester des politiques publiques pratiques, centrées sur la jeunesse et l'efficacité.</p>
 
-                <h3>III. L'Engagement & la Vocation Ultime</h3>
-                <p>Je veux transformer mon profil multidisciplinaire en un atout national. L'excellence de l'UM6P est la rampe pour intégrer plus tard un Master en Politiques Publiques (Oxford) et revenir servir le pays au plus haut niveau.</p>
+                <h3 data-translate="motivation_h3_3">III. L'Engagement & la Vocation Ultime</h3>
+                <p data-translate="motivation_p6">Je veux transformer mon profil multidisciplinaire en un atout national. L'excellence de l'UM6P est la rampe pour intégrer plus tard un Master en Politiques Publiques (Oxford) et revenir servir le pays au plus haut niveau.</p>
                 
-                <p><strong>Je suis le candidat qui apporte la vision, mais aussi la preuve de l'exécution et de la maîtrise des systèmes complexes.</strong></p>
+                <p data-translate="motivation_p7"><strong>Je suis le candidat qui apporte la vision, mais aussi la preuve de l'exécution et de la maîtrise des systèmes complexes.</strong></p>
             </div>
         </div>
     </section>
@@ -487,34 +493,34 @@
     <!-- Contact Section -->
     <section class="contact fade-in" id="contact">
         <div class="container">
-            <h2 class="section-title">Restons Connectés</h2>
+            <h2 class="section-title" data-translate="contact_title">Restons Connectés</h2>
             <div class="contact-content">
                 <div class="contact-info">
                     <div class="contact-info-item">
                         <div class="contact-icon">📞</div>
-                        <div>+212 665859363</div>
+                        <div>+212 665-859363</div>
                     </div>
                     <div class="contact-info-item">
-                        <div class="contact-icon">📧</div>
-                        <div>mouhamedaliyounouss656@gmail.com</div>
+                        <div class="contact-icon">😎​</div>
+                        <div>@3al3ol_ys</div>
                     </div>
                     <div class="contact-info-item">
                         <div class="contact-icon">📍</div>
-                        <div>Casablanca, Maroc</div>
+                        <div data-translate="contact_location">Casablanca, Maroc</div>
                     </div>
                 </div>
                 <div class="contact-form">
                     <form id="contactForm" action="php/contact.php" method="POST">
                         <div class="form-group">
-                            <input type="text" name="name" placeholder="Votre Nom" required>
+                            <input type="text" name="name" data-translate-placeholder="contact_name" placeholder="Votre Nom" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" name="email" placeholder="Votre Email" required>
+                            <input type="email" name="email" data-translate-placeholder="contact_email" placeholder="Votre Email" required>
                         </div>
                         <div class="form-group">
-                            <textarea name="message" placeholder="Votre Message" required></textarea>
+                            <textarea name="message" data-translate-placeholder="contact_message" placeholder="Votre Message" required></textarea>
                         </div>
-                        <button type="submit" class="btn-submit">Envoyer</button>
+                        <button type="submit" class="btn-submit" data-translate="contact_submit">Envoyer</button>
                     </form>
                 </div>
             </div>
@@ -524,7 +530,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-slogan">Vision. Discipline. Innovation Civique.</div>
+            <div class="footer-slogan" data-translate="footer_slogan">Vision. Discipline. Innovation Civique.</div>
             <div class="footer-social">
                 <a href="https://www.linkedin.com/in/mouhamed-ali-younouss-117339391" target="_blank" class="social-link linkedin" title="LinkedIn">
                     <img src="images/linkedin.png" alt="LinkedIn" class="social-logo-img" loading="lazy">
@@ -533,12 +539,15 @@
                     <img src="images/instagram.png" alt="Instagram" class="social-logo-img" loading="lazy">
                 </a>
             </div>
-            <p>&copy; 2026 Younouss Mouhamed Ali. Tous droits réservés. | <a href="#terms" style="color: #FF7A00; text-decoration: none;">Conditions d'utilisation</a></p>
+            <p>&copy; 2026 Younouss Mouhamed Ali. <span data-translate="footer_rights">Tous droits réservés.</span> | <a href="#terms" style="color: #FF7A00; text-decoration: none;" data-translate="footer_terms">Conditions d'utilisation</a></p>
         </div>
     </footer>
 
     <!-- Three.js Library - Deferred Loading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    
+    <!-- Translation System - Must load before script.js -->
+    <script src="js/translations.js" defer></script>
     
     <!-- Custom JavaScript - Deferred Loading -->
     <script src="js/script.js" defer></script>
@@ -547,21 +556,42 @@
          LOADING SCREEN & INITIALIZATION
          ============================================ -->
     <script>
-        // Loading Screen Management
-        window.addEventListener('load', function() {
+        // Loading Screen Management - bottom-up 'cup fill' reveal
+        (function() {
             const loadingScreen = document.getElementById('loading-screen');
-            
-            // Minimum display time for loading screen
-            setTimeout(function() {
-                loadingScreen.classList.add('hidden');
-                
-                // Remove from DOM after transition
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 800);
-        });
-        
+            const logo = document.getElementById('loadingLogo');
+            if (!loadingScreen || !logo) return;
+
+            let progress = 0; // 0..1
+            let finished = false;
+
+            function setFill(p) {
+                p = Math.max(0, Math.min(1, p));
+                const topPercent = 100 - Math.round(p * 100);
+                logo.style.clipPath = `inset(${topPercent}% 0 0 0)`;
+            }
+
+            // Simulate progressive fill until page loads
+            const simInterval = setInterval(() => {
+                if (finished) return;
+                progress += 0.01 + Math.random() * 0.02;
+                if (progress > 0.98) progress = 0.98;
+                setFill(progress);
+            }, 80);
+
+            window.addEventListener('load', () => {
+                finished = true;
+                clearInterval(simInterval);
+                setFill(1);
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+                }, 350);
+            });
+
+            setTimeout(() => setFill(0.05), 80);
+        })();
+    
         // Music Control Script
         window.addEventListener('DOMContentLoaded', function() {
             const music = document.getElementById('bg-music');
@@ -572,12 +602,9 @@
                 return;
             }
             
-            // Set volume to 30%
             music.volume = 0.3;
-            
             let isPlaying = false;
             
-            // Button click handler
             musicBtn.onclick = function(event) {
                 event.preventDefault();
                 event.stopPropagation();
